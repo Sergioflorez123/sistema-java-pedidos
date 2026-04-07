@@ -1,0 +1,390 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide circle
+
+package "model" {
+    
+    abstract class Transaccion {
+        - idTransaccion: String
+        - fechaTransaccion: Date
+        - monto: double
+        - estado: String
+        ..
+        + Transaccion()
+        + Transaccion(String, double)
+        + validarTransaccion(): boolean {abstract}
+        + getIdTransaccion(): String
+        + setIdTransaccion(String)
+        + getFechaTransaccion(): Date
+        + setFechaTransaccion(Date)
+        + getMonto(): double
+        + setMonto(double)
+        + getEstado(): String
+        + setEstado(String)
+    }
+
+    class PagoModel extends Transaccion {
+        - precio: double
+        - metodoPago: String
+        - idPago: String
+        - cliente: ClienteModel
+        - procesado: boolean
+        ..
+        + PagoModel()
+        + PagoModel(double, String, String)
+        + validarTransaccion(): boolean
+        + getPrecio(): double
+        + setPrecio(double)
+        + getMonto(): double
+        + getMetodoPago(): String
+        + setMetodoPago(String)
+        + getIdPago(): String
+        + setIdPago(String)
+        + getCliente(): ClienteModel
+        + setCliente(ClienteModel)
+        + isProcesado(): boolean
+        + setProcesado(boolean)
+        + validarMetodoPago(): boolean
+        + procesarPago()
+        + cancelarPago()
+        + generarComprobante(): String
+    }
+
+    class DevolucionPago extends Transaccion {
+        - motivo: String
+        - pagoOriginal: PagoModel
+        - approved: boolean
+        ..
+        + DevolucionPago()
+        + DevolucionPago(String, double, String, PagoModel)
+        + validarTransaccion(): boolean
+        + procesarDevolucion(): boolean
+        + getMotivo(): String
+        + setMotivo(String)
+        + getPagoOriginal(): PagoModel
+        + setPagoOriginal(PagoModel)
+        + isApproved(): boolean
+        + setApproved(boolean)
+    }
+
+    class ClienteModel {
+        - idCliente: String
+        - genero: String
+        - nombre: String
+        - correoElectronico: String
+        - direccion: String
+        - pago: PagoModel
+        - pedidos: List<PedidoModel>
+        ..
+        + ClienteModel()
+        + ClienteModel(String, String, String, String, String)
+        + getIdCliente(): String
+        + setIdCliente(String)
+        + getGenero(): String
+        + setGenero(String)
+        + getNombre(): String
+        + setNombre(String)
+        + getCorreoElectronico(): String
+        + setCorreoElectronico(String)
+        + getDireccion(): String
+        + setDireccion(String)
+        + getPago(): PagoModel
+        + setPago(PagoModel)
+        + getPedidos(): List<PedidoModel>
+        + setPedidos(List<PedidoModel>)
+    }
+
+    class PedidoModel {
+        - precio: double
+        - idPedido: String
+        - estado: EstadoModel
+        - categoria: String
+        - lugarEntrega: String
+        - fechaPedido: FechaPedidoModel
+        - producto: ProductoModel
+        - clientes: List<ClienteModel>
+        ..
+        + PedidoModel()
+        + PedidoModel(String, double, String, String)
+        + getPrecio(): double
+        + setPrecio(double)
+        + getIdPedido(): String
+        + setIdPedido(String)
+        + getEstado(): EstadoModel
+        + setEstado(EstadoModel)
+        + getCategoria(): String
+        + setCategoria(String)
+        + getLugarEntrega(): String
+        + setLugaEntrega(String)
+        + getFechaPedido(): FechaPedidoModel
+        + setFechaPedido(FechaPedidoModel)
+        + getProducto(): ProductoModel
+        + setProducto(ProductoModel)
+        + getClientes(): List<ClienteModel>
+        + setClientes(List<ClienteModel>)
+    }
+
+    class ProductoModel {
+        - idProducto: String
+        - cantidad: int
+        - resena: String
+        - inventario: InventarioModel
+        - categoria: CategoriaModel
+        - pedido: PedidoModel
+        ..
+        + ProductoModel()
+        + ProductoModel(String, int, String)
+        + getIdProducto(): String
+        + setIdProducto(String)
+        + getCantidad(): int
+        + setCantidad(int)
+        + getResena(): String
+        + setResena(String)
+        + getInventario(): InventarioModel
+        + setInventario(InventarioModel)
+        + getCategoria(): CategoriaModel
+        + setCategoria(CategoriaModel)
+        + getPedido(): PedidoModel
+        + setPedido(PedidoModel)
+    }
+
+    class EstadoModel {
+        - creado: boolean
+        - enviado: boolean
+        - entregado: boolean
+        - cancelado: boolean
+        - pedido: PedidoModel
+        ..
+        + EstadoModel()
+        + isCreado(): boolean
+        + setCreado(boolean)
+        + isEnviado(): boolean
+        + setEnviado(boolean)
+        + isEntregado(): boolean
+        + setEntregado(boolean)
+        + isCancelado(): boolean
+        + setCancelado(boolean)
+        + getPedido(): PedidoModel
+        + setPedido(PedidoModel)
+    }
+
+    class FechaPedidoModel {
+        - fechaPedir: Date
+        - fechaRecibir: Date
+        - fechaEstimada: Date
+        - pedido: PedidoModel
+        ..
+        + FechaPedidoModel()
+        + FechaPedidoModel(Date, Date, Date)
+        + getFechaPedir(): Date
+        + setFechaPedir(Date)
+        + getFechaRecibir(): Date
+        + setFechaRecibir(Date)
+        + getFechaEstimada(): Date
+        + setFechaEstimada(Date)
+        + getPedido(): PedidoModel
+        + setPedido(PedidoModel)
+    }
+
+    class InventarioModel {
+        - cantidad: int
+        - disponibilidad: boolean
+        - categoria: String
+        - productos: List<ProductoModel>
+        ..
+        + InventarioModel()
+        + InventarioModel(int, boolean, String)
+        + getCantidad(): int
+        + setCantidad(int)
+        + isDisponibilidad(): boolean
+        + setDisponibilidad(boolean)
+        + getCategoria(): String
+        + setCategoria(String)
+        + getProductos(): List<ProductoModel>
+        + setProductos(List<ProductoModel>)
+    }
+
+    class CategoriaModel {
+        - comida: boolean
+        - ropa: boolean
+        - electrodomestico: boolean
+        - etc: String
+        - producto: ProductoModel
+        ..
+        + CategoriaModel()
+        + CategoriaModel(boolean, boolean, boolean, String)
+        + isComida(): boolean
+        + setComida(boolean)
+        + isRopa(): boolean
+        + setRopa(boolean)
+        + isElectrodomestico(): boolean
+        + setElectrodomestico(boolean)
+        + getEtc(): String
+        + setEtc(String)
+        + getProducto(): ProductoModel
+        + setProducto(ProductoModel)
+    }
+}
+
+package "repository" {
+    
+    interface ClienteRepository {
+        + findByIdCliente(String): Optional<ClienteModel>
+        + findByCorreoElectronico(String): Optional<ClienteModel>
+        + findByNombre(String): Optional<ClienteModel>
+        + existsByIdCliente(String): boolean
+        + existsByCorreoElectronico(String): boolean
+        + deleteByIdCliente(String)
+    }
+    
+    interface PedidoRepository {
+        + findByIdPedido(String): Optional<PedidoModel>
+        + findByClienteIdCliente(String): List<PedidoModel>
+        + findByCategoria(String): List<PedidoModel>
+        + existsByIdPedido(String): boolean
+        + deleteByIdPedido(String)
+    }
+    
+    interface PagoRepository {
+        + findByIdPago(String): Optional<PagoModel>
+        + findByClienteIdCliente(String): List<PagoModel>
+        + findByMetodoPago(String): List<PagoModel>
+        + existsByIdPago(String): boolean
+        + deleteByIdPago(String)
+    }
+    
+    interface ProductoRepository {
+        + findByIdProducto(String): Optional<ProductoModel>
+        + findByCategoriaIdCategoria(String): List<ProductoModel>
+        + findByInventarioIdInventario(String): List<ProductoModel>
+        + existsByIdProducto(String): boolean
+        + deleteByIdProducto(String)
+    }
+    
+    interface InventarioRepository {
+        + findByIdInventario(String): Optional<InventarioModel>
+        + findByCategoria(String): List<InventarioModel>
+        + findByDisponibilidad(boolean): List<InventarioModel>
+        + existsByIdInventario(String): boolean
+        + deleteByIdInventario(String)
+    }
+}
+
+package "service" {
+    
+    class PedidoService {
+        - calculadora: CalculadoraPedidoService
+        - pedidoRepository: PedidoRepository
+        ..
+        + PedidoService(CalculadoraPedidoService)
+        + findAll(): List<PedidoModel>
+        + findById(String): Optional<PedidoModel>
+        + save(PedidoModel): Optional<PedidoModel>
+        + delete(String): boolean
+        + actualizarEstado(String, EstadoModel): Optional<PedidoModel>
+        + calcularTotalPedido(PedidoModel): double
+        + crearPedido(PedidoModel): Optional<PedidoModel>
+        + cancelarPedido(String): Optional<PedidoModel>
+        + cambiarEstado(String, EstadoModel): Optional<PedidoModel>
+        + validarCategoria(CategoriaModel): boolean
+        + listarCategorias(CategoriaModel): String[]
+    }
+
+    class CalculadoraPedidoService {
+        ..
+        + calcularTotal(ProductoModel): double
+        + calcularImpuesto(double): double
+        + calcularTotalConImpuesto(double): double
+    }
+
+    class PagoService {
+        - pagoRepository: PagoRepository
+        ..
+        + registrarPago(PagoModel): Optional<PagoModel>
+        + listarPagos(): List<PagoModel>
+        + buscarPorId(String): Optional<PagoModel>
+        + validarMetodoPago(PagoModel): boolean
+        + procesarPago(PagoModel)
+        + cancelarPago(String): Optional<PagoModel>
+        + generarComprobante(PagoModel): String
+        + procesarDevolucion(DevolucionPago): boolean
+    }
+    
+    class ClienteService {
+        - clienteRepository: ClienteRepository
+        ..
+        + registrarCliente(ClienteModel): ClienteModel
+        + listarClientes(): List<ClienteModel>
+        + buscarPorId(String): Optional<ClienteModel>
+        + buscarPorCorreo(String): Optional<ClienteModel>
+        + buscarPorNombre(String): Optional<ClienteModel>
+        + actualizarCliente(String, ClienteModel): ClienteModel
+        + eliminarCliente(String)
+        + existePorId(String): boolean
+        + existePorCorreo(String): boolean
+    }
+}
+
+package "controller" {
+    class PedidoController {
+        - pedidoService: PedidoService
+        ..
+        + PedidoController(PedidoService)
+        + listarPedidos(): List<PedidoModel>
+        + obtenerPedido(String): ResponseEntity<PedidoModel>
+        + crearPedido(PedidoModel): ResponseEntity<PedidoModel>
+        + eliminarPedido(String): ResponseEntity<Void>
+    }
+
+    class PagoController {
+        - pagoService: PagoService
+        ..
+        + PagoController(PagoService)
+        + registrarPago(PagoModel): ResponseEntity<PagoModel>
+        + listarPagos(): List<PagoModel>
+        + obtenerPago(String): ResponseEntity<PagoModel>
+    }
+    
+    class ClienteController {
+        - clienteService: ClienteService
+        ..
+        + ClienteController(ClienteService)
+        + registrarCliente(ClienteModel): ClienteModel
+        + listarClientes(): List<ClienteModel>
+        + buscarCliente(String): Optional<ClienteModel>
+    }
+}
+
+' Relaciones de Herencia
+PagoModel -up-> Transaccion
+DevolucionPago -up-> Transaccion
+
+' Relaciones de Asociacion
+DevolucionPago --> PagoModel : pagoOriginal
+
+ClienteModel --> PedidoModel : pedidos
+ClienteModel --> PagoModel : pago
+
+PedidoModel --> EstadoModel : estado
+PedidoModel --> FechaPedidoModel : fechaPedido
+PedidoModel --> ProductoModel : producto
+PedidoModel --> ClienteModel : clientes
+
+ProductoModel --> InventarioModel : inventario
+ProductoModel --> CategoriaModel : categoria
+ProductoModel --> PedidoModel : pedido
+
+FechaPedidoModel --> PedidoModel : pedido
+EstadoModel --> PedidoModel : pedido
+CategoriaModel --> ProductoModel : producto
+InventarioModel --> ProductoModel : productos
+
+' Relaciones de Dependencia
+PedidoService .right.> CalculadoraPedidoService : <<uses>>
+PedidoService .right.> PedidoRepository : <<uses>>
+PagoService .right.> PagoRepository : <<uses>>
+ClienteService .right.> ClienteRepository : <<uses>>
+PedidoController .right.> PedidoService : <<uses>>
+PagoController .right.> PagoService : <<uses>>
+
+@enduml
