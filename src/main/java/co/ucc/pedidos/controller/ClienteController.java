@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+
 import co.ucc.pedidos.model.ClienteModel;
 import co.ucc.pedidos.service.ClienteService;
 
@@ -27,7 +29,7 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping
-    public ResponseEntity<ClienteModel> registrarCliente(@RequestBody ClienteModel cliente) {
+    public ResponseEntity<ClienteModel> registrarCliente(@Valid @RequestBody ClienteModel cliente) {
         ClienteModel clienteRegistrado = clienteService.registrarCliente(cliente);
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteRegistrado);
     }
@@ -63,22 +65,14 @@ public class ClienteController {
     public ResponseEntity<ClienteModel> actualizarCliente(
             @PathVariable String idCliente,
             @RequestBody ClienteModel cliente) {
-        try {
-            ClienteModel clienteActualizado = clienteService.actualizarCliente(idCliente, cliente);
-            return ResponseEntity.ok(clienteActualizado);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+        ClienteModel clienteActualizado = clienteService.actualizarCliente(idCliente, cliente);
+        return ResponseEntity.ok(clienteActualizado);
     }
 
     @DeleteMapping("/{idCliente}")
     public ResponseEntity<Void> eliminarCliente(@PathVariable String idCliente) {
-        try {
-            clienteService.eliminarCliente(idCliente);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
-        }
+        clienteService.eliminarCliente(idCliente);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/existe/id")

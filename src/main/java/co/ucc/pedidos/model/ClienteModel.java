@@ -2,6 +2,9 @@ package co.ucc.pedidos.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -10,6 +13,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "cliente")
@@ -22,6 +27,10 @@ public class ClienteModel {
     @Column(name = "nombre", length = 100)
     private String nombre;
     @Column(name = "correo_electronico", length = 100)
+    @JsonProperty("correo")
+    @JsonAlias("correoElectronico")
+    @NotBlank(message = "El correo es obligatorio")
+    @Email(message = "Debe ser un correo electrónico válido")
     private String correoElectronico;
     @Column(name = "direccion", length = 255)
     private String direccion;
